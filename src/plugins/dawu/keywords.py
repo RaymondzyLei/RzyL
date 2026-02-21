@@ -11,7 +11,7 @@ KEYWORDS={
     "Specific_Heat_of_Solids": ["比热"],
 
     "Rectification_And_Filtering": ["整流", "滤波"],
-    "Semiconductor_Thermometer": ["半导体温度计", "温敏电阻"],
+    "Semiconductor_Thermometer": ["半导体温度计", "温敏", "热敏"],
     "DC_Power_Supply_Characteristics": ["直流电源", "电源特性", "内阻"],
     "Digital_Thermometer": ["数字温度计", "非平衡电桥", "不平衡电桥", "非衡电桥"],
     "Oscilloscope_Usage": ["示波器", "暂态", "RLC", "rlc"],
