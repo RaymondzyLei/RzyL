@@ -17,36 +17,45 @@ from nonebot_plugin_alconna import (
     on_alconna,
 )
 
-dawu = on_alconna(
+dawu1 = on_alconna(
     Alconna(
-        "大雾",
-        Subcommand(
-            "shiyan|sy|1",
-            Args["name", str],
-        )
+        "大雾1",
+        Args["name", str]
     ),
-    rule=to_me(),
+    #rule=to_me(),
     priority=0,
     block=True
 )
 
-def find_keyword(text: str) -> str | None:
+def find_keywords(text: str) -> list[str]:
+    found_keywords = []
     for keyword, aliases in KEYWORDS.items():
         for alias in aliases:
             if alias in text:
-                return keyword
-    return None
+                found_keywords.append(keyword)
+                break
+    return found_keywords
 
-@dawu.assign("shiyan")
-async def _(event: GroupMessageEvent, name: Match[str]):
-    # await dawu.send(f"收到实验名称: {name.result}")
+@dawu1.handle()
+async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEvent在Console调试的时候要删掉
+    #await dawu1.send(f"收到实验名称: {name.result}")
     if name.available:
-        found_keyword = find_keyword(name.result)
-        if found_keyword:
-            image_path = get_image_path(found_keyword)
-            if image_path.exists():
-                await dawu.finish(MessageSegment.image(image_path), reply_message=True)
+        found_keywords = find_keywords(name.result)
+        if found_keywords:
+            messages = []
+            missing_keywords = []
+            for keyword in found_keywords:
+                image_path = get_image_path(keyword)
+                if image_path.exists():
+                    messages.append(MessageSegment.image(image_path))
+                else:
+                    missing_keywords.append(keyword)
+            
+            if messages:
+                if missing_keywords:
+                    messages.append(f"找到关键词: {', '.join(found_keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}")
+                await dawu1.finish(messages, reply_message=True)
             else:
-                await dawu.finish(f"找到关键词: {found_keyword}，但图片文件不存在", reply_message=True)
+                await dawu1.finish(f"找到关键词: {', '.join(found_keywords)}，但所有图片文件都不存在", reply_message=True)
         else:
-            await dawu.finish(f"没有在'{name.result}'中找到关键词哦，再试试呗", reply_message=True)
+            await dawu1.finish(f"没有在'{name.result}'中找到关键词哦，再试试呗", reply_message=True)
