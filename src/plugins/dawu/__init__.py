@@ -43,8 +43,7 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
         if name.result == "ls":
             output_lines = []
             for keyword, aliases in KEYWORDS.items():
-                first_alias = aliases[0] if aliases else ""
-                output_lines.append(f"{keyword}: {first_alias}")
+                output_lines.append(", ".join(aliases))
             await dawu1.finish("\n".join(output_lines), reply_message=True)
         if name.result == "help":
             await dawu1.finish("使用方法: 大雾1 实验名称\n例如: 大雾1 杨氏模量\n\n如果有多个关键词匹配，会显示所有匹配的关键词和对应的图片。\n如果有关键词匹配但图片不存在，会显示缺失的图片文件名。\n如果没有匹配的关键词，会提示没有找到关键词。", reply_message=True)
@@ -56,7 +55,8 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
                 for keyword in found_keywords:
                     image_path = get_image_path(keyword)
                     if image_path.exists():
-                        messages.append(f"{keyword}:")
+                        first_alias = KEYWORDS[keyword][0] if KEYWORDS[keyword] else keyword
+                        messages.append(f"{first_alias}:")
                         messages.append(MessageSegment.image(image_path))
                     else:
                         missing_keywords.append(keyword)
@@ -68,4 +68,4 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
                 else:
                     await dawu1.finish(f"找到关键词: {', '.join(found_keywords)}，但所有图片文件都不存在", reply_message=True)
             else:
-                await dawu1.finish(f"没有在'{name.result}'中找到关键词哦，再试试呗", reply_message=True)
+                await dawu1.finish(f"没有在'{name.result}'中找到关键词哦，使用'大雾1 ls'查看所有关键词", reply_message=True)
