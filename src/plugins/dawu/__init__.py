@@ -4,6 +4,7 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from nonebot.rule import to_me
 from pathlib import Path
 from .config import KEYWORDS, get_image_path
+from .ai_match import ai_match
 
 require("nonebot_plugin_alconna")
 
@@ -68,4 +69,27 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
                 else:
                     await dawu1.finish(f"找到关键词: {', '.join(found_keywords)}，但所有图片文件都不存在", reply_message=True)
             else:
-                await dawu1.finish(f"没有在'{name.result}'中找到关键词哦，使用'大雾1 ls'查看所有关键词", reply_message=True)
+                await dawu1.send(f"没有在'{name.result}'中找到关键词哦，正在尝试AI模糊匹配...", reply_message=True)
+                ai_keywords = ai_match(name.result, KEYWORDS)
+                
+                if ai_keywords:
+                    messages = []
+                    missing_keywords = []
+                    for keyword in ai_keywords:
+                        if keyword in KEYWORDS:
+                            image_path = get_image_path(keyword)
+                            if image_path.exists():
+                                first_alias = KEYWORDS[keyword][0] if KEYWORDS[keyword] else keyword
+                                messages.append(f"AI匹配到关键词: {first_alias}:")
+                                messages.append(MessageSegment.image(image_path))
+                            else:
+                                missing_keywords.append(keyword)
+                    
+                    if messages:
+                        if missing_keywords:
+                            messages.append(f"AI匹配到关键词: {', '.join(ai_keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}")
+                        await dawu1.finish(messages, reply_message=True)
+                    else:
+                        await dawu1.finish(f"AI匹配到关键词: {', '.join(ai_keywords)}，但所有图片文件都不存在", reply_message=True)
+                else:
+                    await dawu1.finish(f"AI也没有找到匹配的关键词，请使用'大雾1 ls'查看所有关键词", reply_message=True)
