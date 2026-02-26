@@ -29,7 +29,7 @@ dawu1 = on_alconna(
         "大雾1",
         Args["name", str]
     ),
-    #rule=Rule(check_group),
+    rule=Rule(check_group),
     #rule=to_me(),
     priority=0,
     block=True
@@ -66,7 +66,7 @@ async def send_keyword_images(keywords: list[str], prefix: str = "找到关键�
 
 @dawu1.handle()
 async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEvent在Console调试的时候要删掉
-    await dawu1.send(f"群号: {event.group_id}")
+    #await dawu1.send(f"群号: {event.group_id}")
     if name.available:
         if name.result == "ls":
             output_lines = []
