@@ -20,7 +20,6 @@ from nonebot_plugin_alconna import (
 )
 
 def check_group(event: GroupMessageEvent) -> bool:
-    print(event.group_id)
     if not ALLOWED_GROUPS:
         return True
     return event.group_id in ALLOWED_GROUPS

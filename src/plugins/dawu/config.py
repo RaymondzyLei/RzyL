@@ -6,11 +6,12 @@ config = nonebot.get_driver().config
 
 # 允许使用本插件的群聊列表，从环境变量获取
 # 在 .env 中设置：DAWU_ALLOWED_GROUPS=123456789,987654321
+# 字符串，单个整数，或整数列表都可以
 # 留空或未设置表示所有群聊都可以使用
 ALLOWED_GROUPS = []
 if hasattr(config, 'dawu_allowed_groups'):
     groups = config.dawu_allowed_groups
-    if groups:
+    if groups:#类型检查和处理
         if isinstance(groups, list):
             ALLOWED_GROUPS = groups
         elif isinstance(groups, int):
