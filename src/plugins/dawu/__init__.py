@@ -1,9 +1,10 @@
 from nonebot import require
 from nonebot_plugin_localstore import get_plugin_data_dir, get_plugin_data_file
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
-from nonebot.rule import to_me
+from nonebot.rule import to_me, Rule
+from nonebot.adapters.onebot.v11 import Bot
 from pathlib import Path
-from .config import KEYWORDS, get_image_path
+from .config import KEYWORDS, get_image_path, ALLOWED_GROUPS
 from .ai_match import ai_match
 
 require("nonebot_plugin_alconna")
@@ -18,11 +19,17 @@ from nonebot_plugin_alconna import (
     on_alconna,
 )
 
+def check_group(event: GroupMessageEvent) -> bool:
+    if not ALLOWED_GROUPS:
+        return True
+    return event.group_id in ALLOWED_GROUPS
+
 dawu1 = on_alconna(
     Alconna(
         "大雾1",
         Args["name", str]
     ),
+    #rule=Rule(check_group),
     #rule=to_me(),
     priority=0,
     block=True
@@ -59,7 +66,7 @@ async def send_keyword_images(keywords: list[str], prefix: str = "找到关键�
 
 @dawu1.handle()
 async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEvent在Console调试的时候要删掉
-    #await dawu1.send(f"收到实验名称: {name.result}")
+    await dawu1.send(f"群号: {event.group_id}")
     if name.available:
         if name.result == "ls":
             output_lines = []
