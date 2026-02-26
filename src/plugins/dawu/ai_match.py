@@ -24,7 +24,7 @@ def ai_match(message: str, keywords: dict) -> list[str]:
     keywords_info = "\n".join(keywords_list)
     
     system_prompt = f"""你是一个关键词匹配助手。
-任务：根据用户输入快速返回所有可能匹配的英文关键词，如果用户的输入与物理实验毫无关系则直接返回NONE
+任务：根据用户输入快速返回所有可能匹配的英文关键词，不要返回任何别名，如果用户的输入与物理实验毫无关系则直接返回NONE
 方法：在第一次浏览关键词的过程中对每个关键词进行匹配，例如：‘Introduction_and_Simple_Pendulum: 绪论, 单摆 - 不相关，...’，不要思考太多，不需要重新检查，浏览过后直接输出结果。规则：用户的输入与关键词的任意一个别名相关即认为匹配，多个用逗号分隔，无匹配返回NONE
 
 关键词及其别名的列表如下：
@@ -36,7 +36,7 @@ def ai_match(message: str, keywords: dict) -> list[str]:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message}
         ],
-        "max_tokens": 4000,
+        "max_tokens": 4500,
         "temperature": 0.3
     }
     
