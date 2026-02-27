@@ -1,6 +1,7 @@
 import aiohttp
 import nonebot
 import json
+import asyncio
 
 config = nonebot.get_driver().config
 BASE_URL = config.base_url
@@ -14,6 +15,8 @@ headers = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
+
+AI_SEMAPHORE = asyncio.Semaphore(8)
 
 async def ai_match(message: str, keywords: dict) -> list[str]:
     keywords_list = []
@@ -41,14 +44,15 @@ async def ai_match(message: str, keywords: dict) -> list[str]:
     }
     
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, json=data) as response:
-                response_json = await response.json()
-                print(response_json)
-                if response_json["choices"][0]["finish_reason"] == "stop":
-                    result = response_json["choices"][0]["message"]["content"].strip()
-                else:
-                    result = "NONE"
+        async with AI_SEMAPHORE:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, headers=headers, json=data) as response:
+                    response_json = await response.json()
+                    print(response_json)
+                    if response_json["choices"][0]["finish_reason"] == "stop":
+                        result = response_json["choices"][0]["message"]["content"].strip()
+                    else:
+                        result = "NONE"
     except Exception as e:
         print(f"AI匹配请求失败: {e}")
         return []
