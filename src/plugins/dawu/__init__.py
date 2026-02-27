@@ -81,7 +81,7 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
                 await send_keyword_images(found_keywords)
             else:
                 await dawu1.send(f"没有在'{name.result}'中找到关键词哦，正在尝试AI模糊匹配...", reply_message=True)
-                ai_keywords = ai_match(name.result, KEYWORDS)
+                ai_keywords = await ai_match(name.result, KEYWORDS)
                 
                 if ai_keywords:
                     await send_keyword_images(ai_keywords, "AI匹配到关键词")

@@ -1,6 +1,7 @@
 import requests
 import nonebot
 import json
+import asyncio
 
 config = nonebot.get_driver().config
 BASE_URL = config.base_url
@@ -15,7 +16,7 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def ai_match(message: str, keywords: dict) -> list[str]:
+async def ai_match(message: str, keywords: dict) -> list[str]:
     keywords_list = []
     for keyword, aliases in keywords.items():
         aliases_str = ", ".join(aliases)
@@ -25,7 +26,7 @@ def ai_match(message: str, keywords: dict) -> list[str]:
     
     system_prompt = f"""你是一个关键词匹配助手。
 任务：根据用户输入快速返回所有可能匹配的英文关键词，不要返回任何别名，如果用户的输入与物理实验毫无关系则直接返回NONE
-方法：在第一次浏览关键词的过程中对每个关键词进行匹配，例如：‘Introduction_and_Simple_Pendulum: 绪论, 单摆 - 不相关，...’，不要思考太多，不需要重新检查，浏览过后直接输出结果。规则：用户的输入与关键词的任意一个别名相关即认为匹配，多个用逗号分隔，无匹配返回NONE
+方法：在第一次浏览关键词的过程中对每个关键词进行匹配，例如：'Introduction_and_Simple_Pendulum: 绪论, 单摆 - 不相关，...'，不要思考太多，不需要重新检查，浏览过后直接输出结果。规则：用户的输入与关键词的任意一个别名相关即认为匹配，多个用逗号分隔，无匹配返回NONE
 
 关键词及其别名的列表如下：
 {keywords_info}"""
@@ -40,7 +41,8 @@ def ai_match(message: str, keywords: dict) -> list[str]:
         "temperature": 0.3
     }
     
-    response = requests.post(url, headers=headers, json=data)
+    # 使用异步请求
+    response = await asyncio.to_thread(requests.post, url, headers=headers, json=data)
     print(response.json())
     if response.json()["choices"][0]["finish_reason"] == "stop":
         result = response.json()["choices"][0]["message"]["content"].strip()
