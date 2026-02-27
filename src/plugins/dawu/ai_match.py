@@ -1,7 +1,6 @@
-import requests
+import aiohttp
 import nonebot
 import json
-import asyncio
 
 config = nonebot.get_driver().config
 BASE_URL = config.base_url
@@ -41,13 +40,18 @@ async def ai_match(message: str, keywords: dict) -> list[str]:
         "temperature": 0.3
     }
     
-    # 使用异步请求
-    response = await asyncio.to_thread(requests.post, url, headers=headers, json=data)
-    print(response.json())
-    if response.json()["choices"][0]["finish_reason"] == "stop":
-        result = response.json()["choices"][0]["message"]["content"].strip()
-    else:
-        result = "NONE"
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=data) as response:
+                response_json = await response.json()
+                print(response_json)
+                if response_json["choices"][0]["finish_reason"] == "stop":
+                    result = response_json["choices"][0]["message"]["content"].strip()
+                else:
+                    result = "NONE"
+    except Exception as e:
+        print(f"AI匹配请求失败: {e}")
+        return []
     
     if result == "NONE":
         return []
