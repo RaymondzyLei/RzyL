@@ -82,9 +82,9 @@ async def send_keyword_images(keywords: list[str], prefix: str = "找到关键�
     if messages:
         if missing_keywords:
             messages.append(f"{prefix}: {', '.join(keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}")
-        await dawu1.finish(messages, reply_message=True)
+        await dawu1.finish(messages)
     else:
-        await dawu1.finish(f"{prefix}: {', '.join(keywords)}，但所有图片文件都不存在", reply_message=True)
+        await dawu1.finish(f"{prefix}: {', '.join(keywords)}，但所有图片文件都不存在")
 
 @dawu1.handle()
 async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEvent在Console调试的时候要删掉
@@ -94,18 +94,18 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
         return
     
     if not validate_input(name.result):
-        await dawu1.finish("输入无效，请提供有效的实验名称（1-100个字符）", reply_message=True)
+        await dawu1.finish("输入无效，请提供有效的实验名称（1-100个字符）")
         return
     
     if not check_rate_limit(event.user_id):
-        await dawu1.finish("请求过于频繁，请稍后再试（每分钟最多10次请求）", reply_message=True)
+        await dawu1.finish("请求过于频繁，请稍后再试（每分钟最多10次请求）")
         return
     
     if name.result == "ls":
         output_lines = []
         for keyword, aliases in KEYWORDS.items():
             output_lines.append(", ".join(aliases))
-        await dawu1.finish("\n".join(output_lines), reply_message=True)
+        await dawu1.finish("\n".join(output_lines))
     elif name.result == "help":
         await dawu1.finish("使用方法: 大雾1 实验名称\n例如: 大雾1 杨氏模量\n\n如果有多个关键词匹配，会显示所有匹配的关键词和对应的图片。\n如果有关键词匹配但图片不存在，会显示缺失的图片文件名。\n如果没有匹配的关键词，会提示没有找到关键词。", reply_message=True)
     else:
@@ -113,10 +113,10 @@ async def _(event: GroupMessageEvent, name: Match[str]): #event: GroupMessageEve
         if found_keywords:
             await send_keyword_images(found_keywords)
         else:
-            await dawu1.send(f"没有在'{name.result}'中找到关键词哦，正在尝试AI模糊匹配...", reply_message=True)
+            await dawu1.send(f"没有在'{name.result}'中找到关键词哦，正在尝试AI模糊匹配...")
             ai_keywords = await ai_match(name.result, KEYWORDS)
             
             if ai_keywords:
                 await send_keyword_images(ai_keywords, "AI匹配到关键词")
             else:
-                await dawu1.finish(f"AI也没有找到匹配的关键词，请使用'大雾1 ls'查看所有关键词", reply_message=True)
+                await dawu1.finish(f"AI也没有找到匹配的关键词，请使用'大雾1 ls'查看所有关键词")
