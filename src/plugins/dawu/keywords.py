@@ -18,7 +18,8 @@ KEYWORDS={
     "Silicon_Photocell": ["硅光电池", "光敏"],
     "RGB_Color_Mixing": ["RGB", "rgb"],
 
-    "Spectrometer": ["分光", "光谱"],
+    "Spectrometer1303": ["分光", "光谱"],
+    "Spectrometer1312": ["分光", "光谱"],
     "Microscope_Usage": ["显微镜"],
     "Lens_Parameter_Measurement": ["透镜", "焦距"],
     "Interfere": ["干涉", "微小"],
