@@ -92,7 +92,7 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
             messages.append(
                 f"{prefix}: {', '.join(keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}"
             )
-        if random.random() < 0.25:
+        if random.random() < 0.15:
             try:
                 async with aiohttp.ClientSession() as session:
                     async with session.get("https://v1.hitokoto.cn/?encode=text") as resp:
@@ -139,13 +139,15 @@ async def _(
             await send_keyword_images(found_keywords)
         else:
             await dawu1.send(
-                f"没有在'{name.result}'中找到关键词哦，正在尝试AI模糊匹配..."
+                f"正在尝试AI匹配...",
+                reply_message=True,
             )
             ai_keywords = await ai_match(name.result, KEYWORDS)
 
             if ai_keywords:
-                await send_keyword_images(ai_keywords, "AI匹配到关键词： ")
+                await send_keyword_images(ai_keywords, "AI匹配到： ")
             else:
                 await dawu1.finish(
-                    f"AI也没有找到匹配的关键词，请使用'大雾1 ls'查看所有关键词"
+                    f"AI也没有找到匹配的关键词，使用'大雾1 ls'查看关键词列表",
+                    reply_message=True,
                 )
