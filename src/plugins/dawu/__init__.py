@@ -92,11 +92,18 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
             messages.append(
                 f"{prefix}: {', '.join(keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}"
             )
-        if random.random() < 0.15:
+        if random.random() < 0.4:
             try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get("https://v1.hitokoto.cn/?encode=text") as resp:
-                        hitokoto = await resp.text()
+                # async with aiohttp.ClientSession() as session:
+                #     async with session.get("https://v1.hitokoto.cn/?encode=text") as resp:
+                #         hitokoto = await resp.text()
+                #         if hitokoto:
+                #             messages.append(f"\n{hitokoto}")
+                sentences_file = Path(__file__).parent / "sentences.txt"
+                with open(sentences_file, "r", encoding="utf-8") as f:
+                    sentences = f.readlines()
+                    if sentences:
+                        hitokoto = random.choice(sentences).strip()
                         if hitokoto:
                             messages.append(f"\n{hitokoto}")
             except Exception:
