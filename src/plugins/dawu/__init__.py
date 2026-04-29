@@ -103,7 +103,10 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
                 with open(sentences_file, "r", encoding="utf-8") as f:
                     sentences = f.readlines()
                     if sentences:
-                        hitokoto = random.choice(sentences).strip()
+                        while True:
+                            hitokoto = random.choice(sentences).strip()
+                            if hitokoto and not hitokoto.startswith("//"):
+                                break
                         if hitokoto:
                             messages.append(f"\n{hitokoto}")
             except Exception:
