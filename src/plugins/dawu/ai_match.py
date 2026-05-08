@@ -10,7 +10,7 @@ MODEL_CHAT = config.model_chat
 MODEL_THINK = config.model_think
 MODEL_LITE = config.model_lite
 
-url = f"{BASE_URL}/v1/chat/completions"
+url = f"{BASE_URL}/chat/completions"
 headers = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
@@ -18,7 +18,7 @@ headers = {
 
 AI_SEMAPHORE = asyncio.Semaphore(8)
 
-async def ai_match(message: str, keywords: dict) -> list[str]:
+async def ai_match(message: str, keywords: dict[str, list[str]]) -> list[str]:
     keywords_list = []
     for keyword, aliases in keywords.items():
         aliases_str = ", ".join(aliases)

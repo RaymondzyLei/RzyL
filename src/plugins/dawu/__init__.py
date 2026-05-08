@@ -118,7 +118,8 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
 
 @dawu1.handle()
 async def _(
-    event: GroupMessageEvent, name: Match[str]
+    event: GroupMessageEvent,
+    name: Match[str]
 ):  # event: GroupMessageEvent在Console调试的时候要删掉
     logger.info(f"收到请求: 群{event.group_id}, 用户{event.user_id}, 内容{name.result}")
 
