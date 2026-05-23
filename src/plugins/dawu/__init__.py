@@ -4,12 +4,9 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-import aiohttp
 from nonebot import require
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
-from nonebot.rule import Rule, to_me
-from nonebot.rule import Rule, to_me
-from nonebot_plugin_localstore import get_plugin_data_dir, get_plugin_data_file
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Message
+from nonebot.rule import Rule
 
 from .ai_match import ai_match
 from .config import ALLOWED_GROUPS, KEYWORDS, get_image_path
@@ -94,11 +91,6 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
             )
         if random.random() < 0.4:
             try:
-                # async with aiohttp.ClientSession() as session:
-                #     async with session.get("https://v1.hitokoto.cn/?encode=text") as resp:
-                #         hitokoto = await resp.text()
-                #         if hitokoto:
-                #             messages.append(f"\n{hitokoto}")
                 sentences_file = Path(__file__).parent / "sentences.txt"
                 with open(sentences_file, "r", encoding="utf-8") as f:
                     sentences = f.readlines()
@@ -120,7 +112,7 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
 async def _(
     event: GroupMessageEvent,
     name: Match[str]
-):  # event: GroupMessageEvent在Console调试的时候要删掉
+):
     logger.info(f"收到请求: 群{event.group_id}, 用户{event.user_id}, 内容{name.result}")
 
     if not name.available:
