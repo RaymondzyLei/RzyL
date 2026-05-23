@@ -70,8 +70,37 @@ def find_keywords(text: str) -> list[str]:
     return found_keywords
 
 
+def load_random_sentence() -> str | None:
+    try:
+        sentences_file = Path(__file__).parent / "sentences.txt"
+        with open(sentences_file, "r", encoding="utf-8") as f:
+            sentences = f.readlines()
+        if not sentences:
+            return None
+        while True:
+            sentence = random.choice(sentences).strip()
+            if sentence and not sentence.startswith("//"):
+                return sentence
+    except Exception:
+        return None
+
+
+def load_random_question() -> str | None:
+    try:
+        questions_file = Path(__file__).parent / "question.txt"
+        with open(questions_file, "r", encoding="utf-8") as f:
+            questions = f.readlines()
+        if not questions:
+            return None
+        while True:
+            question = random.choice(questions).strip()
+            if question and not question.startswith("//"):
+                return question
+    except Exception:
+        return None
+
+
 async def send_keyword_images(keywords: list[str], prefix: str = ""):
-    
     messages = []
     missing_keywords = []
     for keyword in keywords:
@@ -90,19 +119,13 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
                 f"{prefix}: {', '.join(keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}"
             )
         if random.random() < 0.4:
-            try:
-                sentences_file = Path(__file__).parent / "sentences.txt"
-                with open(sentences_file, "r", encoding="utf-8") as f:
-                    sentences = f.readlines()
-                    if sentences:
-                        while True:
-                            hitokoto = random.choice(sentences).strip()
-                            if hitokoto and not hitokoto.startswith("//"):
-                                break
-                        if hitokoto:
-                            messages.append(f"\n{hitokoto}")
-            except Exception:
-                pass
+            sentence = load_random_sentence()
+            if sentence:
+                messages.append(f"\n{sentence}")
+        elif random.random() < 0.4:
+            question = load_random_question()
+            if question:
+                messages.append(f"\n{question}\n这是一个值得思考的问题😜")
         await dawu1.finish(Message(messages))
     else:
         await dawu1.finish(f"{prefix}: {', '.join(keywords)}，但所有图片文件都不存在")
