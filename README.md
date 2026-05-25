@@ -67,8 +67,10 @@ RzyL/
 │   │   ├── dawu/              # 主插件
 │   │   │   ├── __init__.py    # 主逻辑、命令处理
 │   │   │   ├── config.py      # 配置、群组过滤
-│   │   │   ├── keywords.py    # 关键词定义
+│   │   │   ├── keywords.py    # 关键词加载器
+│   │   │   ├── keywords.json  # 关键词定义
 │   │   │   ├── ai_match.py    # AI 匹配
+│   │   │   ├── random_text.py # 随机文本加载
 │   │   │   ├── sentences.txt  # 随机一言
 │   │   │   └── question.txt   # 小问题
 │   │   └── echo/              # Echo插件示例

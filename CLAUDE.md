@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 uv sync              # 安装依赖
 uv run bot.py        # 运行机器人
+uv run pyright       # 静态类型检查
 ```
 
 ## 项目架构
@@ -20,16 +21,18 @@ RzyL/
 ├── bot.py                    # 机器人入口，注册适配器和插件
 ├── pyproject.toml             # 项目配置
 ├── src/
-│   └── plugins/
-│       ├── dawu/              # 主插件 - 物理实验查询
-│       │   ├── __init__.py    # 主逻辑: 命令处理、关键词匹配、AI回退
-│       │   ├── config.py      # 配置: ALLOWED_GROUPS, KEYWORDS, get_image_path
-│       │   ├── keywords.py     # 关键词定义（英文关键词 -> 中文别名映射）
-│       │   ├── ai_match.py    # AI匹配逻辑（异步API调用，信号量控制8并发）
-│       │   ├── sentences.txt  # 随机一言句子库
-│       │   └── question.txt   # 随机小问题库
-│       └── echo/             # Echo插件(示例)
-└── src/asserts/dawu/         # 实验图片存储目录（.jpg文件）
+│   ├── plugins/
+│   │   ├── dawu/              # 主插件 - 物理实验查询
+│   │   │   ├── __init__.py    # 主逻辑: 命令处理、关键词匹配、AI回退
+│   │   │   ├── config.py      # 配置: ALLOWED_GROUPS, get_image_path
+│   │   │   ├── keywords.py     # 关键词加载（从keywords.json读取）
+│   │   │   ├── keywords.json   # 关键词定义（英文关键词 -> 中文别名映射）
+│   │   │   ├── ai_match.py    # AI匹配逻辑（异步API调用，信号量控制8并发）
+│   │   │   ├── random_text.py # 随机文本加载（概率发送一言或小问题）
+│   │   │   ├── sentences.txt  # 随机一言句子库
+│   │   │   └── question.txt   # 随机小问题库
+│   │   └── echo/             # Echo插件(示例)
+│   └── asserts/dawu/         # 实验图片存储目录（.jpg文件）
 ```
 
 ## 核心机制
@@ -44,8 +47,10 @@ RzyL/
 ## 关键文件
 
 - `bot.py` - 机器人入口，注册适配器和插件
-- `src/plugins/dawu/__init__.py` - 主插件逻辑，包含 `dawu1` 命令处理器
+- `src/plugins/dawu/__init__.py` - 主插件逻辑，包含 `大雾1` 命令处理器
 - `src/plugins/dawu/config.py` - 群组配置和图片路径获取
-- `src/plugins/dawu/keywords.py` - 关键词定义（英文关键词 -> 中文别名映射）
+- `src/plugins/dawu/keywords.py` - 关键词加载器（从 keywords.json 读取）
+- `src/plugins/dawu/keywords.json` - 关键词定义（英文关键词 -> 中文别名映射）
 - `src/plugins/dawu/ai_match.py` - AI匹配逻辑（异步API调用）
+- `src/plugins/dawu/random_text.py` - 随机文本加载（概率发送一言或小问题）
 - `.env.secret` - API密钥配置（从 `.env.secret.temple` 复制）
