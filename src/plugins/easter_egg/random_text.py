@@ -20,14 +20,14 @@ def load_random_line(filename: str) -> str | None:
 
 def load_random_text() -> str | None:
     weekday = datetime.now().weekday()
-    prob = 1.0 if weekday in (1, 4) else 0.5
+    prob = 0.5 if weekday in (1, 4) else 0.2
 
-    if random.random() < 0.2:
+    if random.random() < 0.4:
         sentence = load_random_line("sentences.txt")
         if sentence:
             return f"\n{sentence}"
     elif random.random() < prob:
         question = load_random_line("question.txt")
         if question:
-            return f"\n{question}\n这是一个值得思考的问题😜"
+            return f"\n{question}"
     return None
