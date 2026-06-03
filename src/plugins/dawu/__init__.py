@@ -8,11 +8,13 @@ from nonebot.rule import Rule
 
 from .ai_match import ai_match
 from .config import ALLOWED_GROUPS, KEYWORDS, get_image_path
-from .random_text import load_random_text
 
 logger = logging.getLogger(__name__)
 
 require("nonebot_plugin_alconna")
+require("src.plugins.easter_egg")
+
+from src.plugins.easter_egg import try_load_random_text
 
 from nonebot_plugin_alconna import (
     Alconna,
@@ -89,7 +91,7 @@ async def send_keyword_images(keywords: list[str], prefix: str = ""):
             messages.append(
                 f"{prefix}: {', '.join(keywords)}，但部分图片文件不存在: {', '.join(missing_keywords)}"
             )
-        if random_text := load_random_text():
+        if random_text := try_load_random_text():
             messages.append(random_text)
         await dawu1.finish(Message(messages))
     else:
