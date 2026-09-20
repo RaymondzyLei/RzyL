@@ -1,5 +1,7 @@
 # RzyL - 物理实验查询机器人
 
+**Important**: This repository is no longer maintained. If you wish to add new features, please see [https://github.com/Yu-Z-H-dev/RzyL](https://github.com/Yu-Z-H-dev/RzyL)
+
 基于 NoneBot2 的 QQ 机器人，提供物理实验图片查询功能，支持精确匹配和 AI 模糊匹配。
 
 ## 功能特性
